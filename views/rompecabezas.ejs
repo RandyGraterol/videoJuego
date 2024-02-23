@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>puzzleeeeee</title>
+	<style>
+        body {
+            background: khaki;
+            font-family: Arial, Verdana, sans-serif;
+        }
+
+        #piezas {
+            display: flex;
+            flex-wrap: wrap;
+            width: 400px;
+            margin: auto;
+            justify-content: center;
+        }
+
+        #puzzle {
+            border: 3px solid white;
+            width: 318px;
+            height: 495px;
+            display: flex;
+            flex-wrap: wrap;
+            margin: auto;
+        }
+
+        .pieza {
+            width: 106px;
+            height: 165px;
+            background-size: cover;
+            margin: 10px;
+        }
+
+        .placeholder {
+            background-color: #F2F2F2;
+            outline: 2px solid #333;
+            width: 106px;
+            height: 165px;
+            transition: 1s;
+        }
+
+        .placeholder.hover {
+            background-color: orange;
+        }
+
+        .placeholder .pieza {
+            margin: 0;
+        }
+
+        #mensaje {
+            color: black;
+            text-align: center;
+            display: none;
+        }
+
+        .ganaste {
+            background-color: #B3D67C;
+        }
+
+        .ganaste #mensaje {
+            display: block;
+        }
+
+        .ganaste .placeholder {
+            outline: none;
+        }
+
+        .ganaste #piezas {
+            display: none;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .head{
+            display:flex;
+            justify-content:start;
+            align-items: center;
+            height:3rem;
+            
+        }
+        button{
+            margin-left: 4rem;
+            padding:.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class='head'>
+ <button onclick="regresar()">Salir</button>   
+</div>
+
+<div class="container">
+   <div id="puzzle"></div>
+   <div id="piezas"></div>
+</div>
+
+  <h1 id="mensaje">!ganaste!</h1>
+
+<script type="text/javascript"> 
+
+ function regresar(){
+    window.location.href='/';
+ }
+
+  const imagenes= [
+  'imagen-0','imagen-1','imagen-2',
+  'imagen-3','imagen-4','imagen-5',
+  'imagen-6','imagen-7','imagen-8'
+  ];
+
+ const puzzle= document.querySelector("#puzzle");
+ const piezas= document.querySelector("#piezas");
+ const mensaje= document.querySelector("#mensaje");
+
+ let terminado= imagenes.length;
+
+while(imagenes.length>0){
+	const index= Math.floor(Math.random()*imagenes.length);
+    let div = document.createElement("DIV");
+    div.style.backgroundImage= `url(/img/rompecabezas/${imagenes[index]}.jpg)`;
+    div.className="pieza";
+    div.id=imagenes[index];
+    div.draggable="true";
+    piezas.append(div);
+    imagenes.splice(index,1);
+}
+
+
+for(let x=0;x<terminado;x++){
+const div= document.createElement("DIV");
+div.className="placeholder";
+div.dataset.id=x;
+puzzle.append(div); 
+}
+
+piezas.addEventListener("dragstart",e=>{
+    e.dataTransfer.setData("id",e.target.id)
+})
+
+puzzle.addEventListener("dragover",e=>{
+    e.preventDefault();
+    e.target.classList.add("hover");
+})
+
+puzzle.addEventListener("dragleave",e=>{
+    e.target.classList.remove("hover");
+})
+
+puzzle.addEventListener("drop",e=>{
+    e.target.classList.remove("hover");
+    const id= e.dataTransfer.getData("id");
+    let numero= id.split('-')[1];
+    let ul= document.getElementById(id)
+    if(e.target.dataset.id === numero){
+     e.target.append(ul);
+     terminado--;
+     if(terminado === 0){
+        document.body.classList.add("ganaste")
+     }
+    }
+});
+</script>
+</body>
+</html>
